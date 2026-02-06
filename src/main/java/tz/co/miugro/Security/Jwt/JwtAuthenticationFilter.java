@@ -1,5 +1,4 @@
-package tz.co.miugro.Security.Jwt;
-
+package co.tz.sheriaconnectapi.Security.Jwt;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -10,17 +9,18 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
-import tz.co.miugro.Model.Entities.User;
-import tz.co.miugro.Repositories.UserRepository;
+import co.tz.sheriaconnectapi.Model.Entities.User;
+import co.tz.sheriaconnectapi.Repositories.UserRepository;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final UserRepository userRepository; // Inject UserRepository to fetch user details
+    private final UserRepository userRepository;
 
     public JwtAuthenticationFilter(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -29,42 +29,55 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.equals("/user") || path.equals("/login"); // Skip JWT filter for these endpoints
+        return path.startsWith("/auth") || path.startsWith("/public");
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
-        String token = null;
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
         }
 
-        if (token != null && JwtUtil.isTokenValid(token)) {
-            Claims claims = JwtUtil.getClaims(token);
-            String email = claims.getSubject();
+        String token = authHeader.substring(7);
 
-            // Fetch user from the database
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("User not found: " + email));
-
-            // Extract roles and authorities from the database
-            List<SimpleGrantedAuthority> grantedAuthorities = user.getRoles().stream()
-                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
-                    .collect(Collectors.toList());
-
-            grantedAuthorities.addAll(user.getAuthorities().stream()
-                    .map(authority -> new SimpleGrantedAuthority(authority.getName()))
-                    .toList());
-
-            Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, grantedAuthorities);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (!JwtUtil.isTokenValid(token)) {
+            filterChain.doFilter(request, response);
+            return;
         }
+
+        Claims claims = JwtUtil.getClaims(token);
+        String email = claims.getSubject();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("User not found: " + email)
+                );
+
+        // Flatten: User → Roles → Authorities
+        Set<SimpleGrantedAuthority> grantedAuthorities =
+                user.getRoles().stream()
+                        .flatMap(role -> role.getAuthorities().stream())
+                        .map(authority ->
+                                new SimpleGrantedAuthority(authority.getName())
+                        )
+                        .collect(Collectors.toSet());
+
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(
+                        email,
+                        null,
+                        grantedAuthorities
+                );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         filterChain.doFilter(request, response);
     }

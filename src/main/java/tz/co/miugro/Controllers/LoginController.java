@@ -1,11 +1,13 @@
-package tz.co.miugro.Controllers;
+package co.tz.sheriaconnectapi.Controllers;
 
 
+import co.tz.sheriaconnectapi.Model.DTOs.LoginInput;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tz.co.miugro.Model.Commands.LoginResponse;
-import tz.co.miugro.Model.DTOs.UserLoginDTO;
-import tz.co.miugro.Services.LoginService.LoginService;
+import co.tz.sheriaconnectapi.Model.Commands.LoginResponse;
+import co.tz.sheriaconnectapi.Model.DTOs.UserLoginDTO;
+import co.tz.sheriaconnectapi.Services.LoginService.LoginService;
 
 @RestController
 @CrossOrigin(origins = "http://localhost", allowedHeaders = {"Authorization", "Content-Type"})
@@ -18,8 +20,8 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody UserLoginDTO loginDTO) {
-        return loginService.execute(loginDTO);
+    public ResponseEntity<LoginResponse> login(@RequestBody UserLoginDTO loginDTO, HttpServletRequest request) {
+        return loginService.execute(new LoginInput(loginDTO, request));
     }
 
 }

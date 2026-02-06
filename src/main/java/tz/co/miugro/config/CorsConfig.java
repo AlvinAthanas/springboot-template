@@ -1,4 +1,4 @@
-package tz.co.miugro.config;
+package co.tz.sheriaconnectapi.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

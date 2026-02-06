@@ -1,11 +1,11 @@
-package tz.co.miugro.Model.DTOs;
+package co.tz.sheriaconnectapi.Model.DTOs;
 
 
+import co.tz.sheriaconnectapi.Model.Entities.User;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.Setter;
-import tz.co.miugro.Model.Entities.User;
 
 import java.util.Base64;
 import java.util.Optional;

@@ -1,5 +1,6 @@
-package tz.co.miugro.Controllers;
+package co.tz.sheriaconnectapi.Controllers;
 
+import co.tz.sheriaconnectapi.Security.Jwt.ClientType;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,9 +10,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tz.co.miugro.Model.Entities.User;
-import tz.co.miugro.Repositories.UserRepository;
-import tz.co.miugro.Security.Jwt.JwtUtil;
+import co.tz.sheriaconnectapi.Model.Entities.User;
+import co.tz.sheriaconnectapi.Repositories.UserRepository;
+import co.tz.sheriaconnectapi.Security.Jwt.JwtUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -62,6 +63,16 @@ public class RefreshController {
         System.out.println("Authorities: " + user.getRoles().stream()
                 .map(r -> "ROLE_" + r.getName())
                 .toList());
+        String clientTypeHeader = request.getHeader("X-Client-Type");
+        ClientType clientType = ClientType.WEB; // default
+
+        if (clientTypeHeader != null) {
+            try {
+                clientType = ClientType.valueOf(clientTypeHeader.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                // optional: log warning about invalid client type
+            }
+        }
 
         // Generate new access token
         String newAccessToken = JwtUtil.generateAccessToken(
@@ -71,7 +82,8 @@ public class RefreshController {
                         .authorities(user.getRoles().stream()
                                 .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getName()))
                                 .collect(Collectors.toList()))
-                        .build()
+                        .build(),
+                clientType
         );
         System.out.println("Generated access token: " + newAccessToken);
 

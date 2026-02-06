@@ -1,11 +1,9 @@
-package tz.co.miugro.Security.Jwt;
+package co.tz.sheriaconnectapi.Security.Jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.crypto.SecretKey;
@@ -16,34 +14,52 @@ import java.util.stream.Collectors;
 
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "a-string-secret-at-least-256-bits-long";
-    private static final long ACCESS_EXPIRATION = 5 * 60 * 1000; // 5 minutes
-    private static final long REFRESH_EXPIRATION = 7 * 24 * 60 * 60 * 1000; // 7 days
+    private static final SecretKey SIGNING_KEY =
+            Keys.hmacShaKeyFor(
+                    System.getenv("JWT_SECRET").getBytes()
+            );
 
-    public static String generateAccessToken(UserDetails userDetails) {
-        return generateToken(userDetails.getUsername(), userDetails.getAuthorities(), ACCESS_EXPIRATION);
+    // WEB
+    private static final long WEB_ACCESS_EXPIRY = 5 * 60 * 1000;      // 5 min
+    private static final long WEB_REFRESH_EXPIRY = 7L * 24 * 60 * 60 * 1000; // 7 days
+
+    // MOBILE
+    private static final long MOBILE_ACCESS_EXPIRY = 30 * 60 * 1000;  // 30 min
+    private static final long MOBILE_REFRESH_EXPIRY = 30L * 24 * 60 * 60 * 1000; // 30 days
+
+    public static String generateAccessToken(UserDetails user, ClientType clientType) {
+        long expiry = clientType == ClientType.MOBILE
+                ? MOBILE_ACCESS_EXPIRY
+                : WEB_ACCESS_EXPIRY;
+
+        return generateToken(user, expiry);
     }
 
-    public static String generateRefreshToken(UserDetails userDetails) {
-        return generateToken(userDetails.getUsername(), userDetails.getAuthorities(), REFRESH_EXPIRATION);
+    public static String generateRefreshToken(UserDetails user, ClientType clientType) {
+        long expiry = clientType == ClientType.MOBILE
+                ? MOBILE_REFRESH_EXPIRY
+                : WEB_REFRESH_EXPIRY;
+
+        return generateToken(user, expiry);
     }
 
-    public static String generateToken(String username, Collection<? extends GrantedAuthority> authorities, long expiration) {
-        List<String> roles = authorities.stream()
+    private static String generateToken(UserDetails user, long expiry) {
+        List<String> authorities = user.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
         return Jwts.builder()
-                .setSubject(username)
-                .claim("roles", roles)
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSigningKey())
+                .setSubject(user.getUsername())
+                .claim("authorities", authorities)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiry))
+                .signWith(SIGNING_KEY)
                 .compact();
     }
 
     public static Claims getClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(getSigningKey())
+                .setSigningKey(SIGNING_KEY)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -51,7 +67,7 @@ public class JwtUtil {
 
     public static boolean isTokenValid(String token) {
         try {
-            return !getClaims(token).getExpiration().before(new Date());
+            return getClaims(token).getExpiration().after(new Date());
         } catch (Exception e) {
             return false;
         }
@@ -61,8 +77,5 @@ public class JwtUtil {
         return getClaims(token).getSubject();
     }
 
-    private static SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
-    }
-}
 
+}

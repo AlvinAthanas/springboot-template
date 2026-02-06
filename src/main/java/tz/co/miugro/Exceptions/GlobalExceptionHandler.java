@@ -1,4 +1,4 @@
-package tz.co.miugro.Exceptions;
+package co.tz.sheriaconnectapi.Exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,5 +23,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage()));
     }
 
+    @ExceptionHandler(InvalidClientTypeException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidClientTypeException(InvalidClientTypeException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
+    }
 
 }

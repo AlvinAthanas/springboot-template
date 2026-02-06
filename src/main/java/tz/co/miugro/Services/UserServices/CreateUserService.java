@@ -1,4 +1,4 @@
-package tz.co.miugro.Services.UserServices;
+package co.tz.sheriaconnectapi.Services.UserServices;
 
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -6,12 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import tz.co.miugro.Abstractions.Command;
-import tz.co.miugro.Exceptions.ErrorMessages;
-import tz.co.miugro.Exceptions.UserNotValidException;
-import tz.co.miugro.Model.DTOs.UserDTO;
-import tz.co.miugro.Model.Entities.User;
-import tz.co.miugro.Repositories.UserRepository;
+import co.tz.sheriaconnectapi.Abstractions.Command;
+import co.tz.sheriaconnectapi.Exceptions.ErrorMessages;
+import co.tz.sheriaconnectapi.Exceptions.UserNotValidException;
+import co.tz.sheriaconnectapi.Model.DTOs.UserDTO;
+import co.tz.sheriaconnectapi.Model.Entities.User;
+import co.tz.sheriaconnectapi.Repositories.UserRepository;
 
 
 @Service

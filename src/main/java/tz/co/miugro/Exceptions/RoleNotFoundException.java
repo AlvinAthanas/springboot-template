@@ -1,4 +1,4 @@
-package tz.co.miugro.Exceptions;
+package co.tz.sheriaconnectapi.Exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

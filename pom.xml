@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>tz.co</groupId>
-	<artifactId>miugroAPI</artifactId>
+	<artifactId>springboot template</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>miugro</name>
 	<description>MIUGRO Contributions Management System</description>

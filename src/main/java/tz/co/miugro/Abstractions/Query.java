@@ -1,4 +1,4 @@
-package tz.co.miugro.Abstractions;
+package co.tz.sheriaconnectapi.Abstractions;
 
 import org.springframework.http.ResponseEntity;
 

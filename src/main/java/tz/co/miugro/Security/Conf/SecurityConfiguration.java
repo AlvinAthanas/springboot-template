@@ -1,4 +1,4 @@
-package tz.co.miugro.Security.Conf;
+package co.tz.sheriaconnectapi.Security.Conf;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,9 +15,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import tz.co.miugro.Repositories.UserRepository;
-import tz.co.miugro.Security.Jwt.JwtAuthenticationFilter;
-import tz.co.miugro.Security.UserDetails.CustomUserDetailsService;
+import co.tz.sheriaconnectapi.Repositories.UserRepository;
+import co.tz.sheriaconnectapi.Security.Jwt.JwtAuthenticationFilter;
+import co.tz.sheriaconnectapi.Security.UserDetails.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity

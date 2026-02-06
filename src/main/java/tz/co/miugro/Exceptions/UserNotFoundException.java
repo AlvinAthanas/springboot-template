@@ -1,4 +1,4 @@
-package tz.co.miugro.Exceptions;
+package co.tz.sheriaconnectapi.Exceptions;
 
 public class UserNotFoundException  extends RuntimeException{
     public UserNotFoundException() {

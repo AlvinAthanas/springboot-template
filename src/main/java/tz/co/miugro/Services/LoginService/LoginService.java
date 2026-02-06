@@ -1,6 +1,10 @@
-package tz.co.miugro.Services.LoginService;
+package co.tz.sheriaconnectapi.Services.LoginService;
 
 
+import co.tz.sheriaconnectapi.Model.Commands.MobileLoginResponse;
+import co.tz.sheriaconnectapi.Model.DTOs.LoginInput;
+import co.tz.sheriaconnectapi.Security.Jwt.ClientType;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -8,19 +12,21 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import tz.co.miugro.Abstractions.Command;
-import tz.co.miugro.Exceptions.UserNotFoundException;
-import tz.co.miugro.Model.Commands.LoginResponse;
-import tz.co.miugro.Model.DTOs.UserDTO;
-import tz.co.miugro.Model.DTOs.UserLoginDTO;
-import tz.co.miugro.Model.Entities.User;
-import tz.co.miugro.Repositories.UserRepository;
-import tz.co.miugro.Security.Jwt.JwtUtil;
+import co.tz.sheriaconnectapi.Abstractions.Command;
+import co.tz.sheriaconnectapi.Exceptions.UserNotFoundException;
+import co.tz.sheriaconnectapi.Model.Commands.LoginResponse;
+import co.tz.sheriaconnectapi.Model.DTOs.UserDTO;
+import co.tz.sheriaconnectapi.Model.DTOs.UserLoginDTO;
+import co.tz.sheriaconnectapi.Model.Entities.User;
+import co.tz.sheriaconnectapi.Repositories.UserRepository;
+import co.tz.sheriaconnectapi.Security.Jwt.JwtUtil;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import java.util.Optional;
 
 @Service
-public class LoginService implements Command<UserLoginDTO, LoginResponse> {
+public class LoginService implements Command<LoginInput, LoginResponse> {
 
     private final AuthenticationManager manager;
     private final UserRepository userRepository;
@@ -31,48 +37,71 @@ public class LoginService implements Command<UserLoginDTO, LoginResponse> {
     }
 
     @Override
-    public ResponseEntity<LoginResponse> execute(UserLoginDTO input) {
-        try {
-            UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(input.getEmail(), input.getPassword());
+    public ResponseEntity<LoginResponse> execute(LoginInput loginInput) {
 
-            Authentication authentication = manager.authenticate(authToken);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(
+                        loginInput.getUserLoginDTO().getEmail(),
+                        loginInput.getUserLoginDTO().getPassword()
+                );
 
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Authentication authentication = manager.authenticate(authToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            assert userDetails != null;
-            String accessToken = JwtUtil.generateAccessToken(userDetails);
-            String refreshToken = JwtUtil.generateRefreshToken(userDetails);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-            // Get user entity and DTO
-            tz.co.miugro.Model.Entities.User userEntity = userRepository.findByEmail(input.getEmail())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            UserDTO userDTO = new UserDTO(userEntity);
+        // ✅ Proper client detection
+        String clientHeader = loginInput.getRequest().getHeader("X-Client-Type");
+        ClientType clientType = ClientType.WEB;
 
-            LoginResponse responseBody = new LoginResponse(
-                    "Login successfully.",
+        if (clientHeader != null) {
+            try {
+                clientType = ClientType.valueOf(clientHeader.toUpperCase());
+            } catch (IllegalArgumentException ignored) {}
+        }
+
+        String accessToken = JwtUtil.generateAccessToken(userDetails, clientType);
+        String refreshToken = JwtUtil.generateRefreshToken(userDetails, clientType);
+
+        User userEntity = userRepository.findByEmail(loginInput.getUserLoginDTO().getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        UserDTO userDTO = new UserDTO(userEntity);
+
+        // 🌐 WEB → cookie
+        if (clientType == ClientType.WEB) {
+
+            LoginResponse response = new LoginResponse(
+                    "Login successful",
                     accessToken,
                     true,
                     userDTO
             );
 
             return ResponseEntity.ok()
-                    .header("Set-Cookie", "refresh_token=" + refreshToken
-                            + "; HttpOnly; Path=/; Max-Age=" + (7 * 24 * 60 * 60)
-                            + "; SameSite=None; Secure")
-                    .body(responseBody);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(500)
-                    .body(new LoginResponse(
-                            "An error occurred: " + e.getMessage(),
-                            null,
-                            false,
-                            null
-                    ));
+                    .header(
+                            "Set-Cookie",
+                            "refresh_token=" + refreshToken +
+                                    "; HttpOnly; Path=/auth/refresh" +
+                                    "; Max-Age=" + (7 * 24 * 60 * 60) +
+                                    "; SameSite=None; Secure"
+                    )
+                    .body(response);
         }
+
+        // 📱 MOBILE → response body
+        MobileLoginResponse response = new MobileLoginResponse(
+                "Login successful",
+                accessToken,
+                true,
+                userDTO,
+                refreshToken
+        );
+
+        return ResponseEntity.ok(response);
     }
+
+
 
 
 }

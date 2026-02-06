@@ -1,4 +1,4 @@
-package tz.co.miugro.Model.Entities;
+package co.tz.sheriaconnectapi.Model.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -8,8 +8,10 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
+@Setter
+@Getter
 @Entity
-@Table(name = "role")
+@Table(name = "roles")
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,13 +19,16 @@ public class Role {
     private String name;
 
 
-    @ManyToMany(mappedBy = "roles")
-    @JsonIgnore
-    private Set<User> users;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "role_authorities",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "authority_id")
+    )
+    private Set<Authority> authorities = new HashSet<>();
 
     public Role(String name) {
         this.name = name;
-        users = new HashSet<>();
     }
 
 
@@ -33,27 +38,4 @@ public class Role {
     }
 
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
 }

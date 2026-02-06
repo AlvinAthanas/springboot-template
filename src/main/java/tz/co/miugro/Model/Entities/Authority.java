@@ -1,4 +1,4 @@
-package tz.co.miugro.Model.Entities;
+package co.tz.sheriaconnectapi.Model.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "authority")
+@Table(name = "authorities")
 @Data
 public class Authority {
     @Id
@@ -16,31 +16,4 @@ public class Authority {
     private int id;
     private String name;
 
-    @ManyToMany(mappedBy = "authorities")
-    @JsonIgnore
-    private Set<User> users;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
 }
