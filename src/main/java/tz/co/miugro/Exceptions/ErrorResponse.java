@@ -1,0 +1,12 @@
+package tz.co.miugro.Exceptions;
+
+import lombok.Getter;
+
+@Getter
+public class ErrorResponse {
+    private String message;
+
+    public ErrorResponse(String message) {
+        this.message = message;
+    }
+}
