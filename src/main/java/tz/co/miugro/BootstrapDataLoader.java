@@ -1,9 +1,9 @@
-package co.tz.sheriaconnectapi;
+package tz.co.miugro;
 
-import co.tz.sheriaconnectapi.Model.Entities.Authority;
-import co.tz.sheriaconnectapi.Model.Entities.Role;
-import co.tz.sheriaconnectapi.Repositories.AuthorityRepository;
-import co.tz.sheriaconnectapi.Repositories.RoleRepository;
+import tz.co.miugro.Model.Entities.Authority;
+import tz.co.miugro.Model.Entities.Role;
+import tz.co.miugro.Repositories.AuthorityRepository;
+import tz.co.miugro.Repositories.RoleRepository;
 import jakarta.persistence.Entity;
 import lombok.RequiredArgsConstructor;
 import org.reflections.Reflections;
@@ -38,7 +38,7 @@ public class BootstrapDataLoader implements CommandLineRunner {
         // 1️⃣ Generate Authorities
         // ==========================
         Reflections reflections =
-                new Reflections("co.tz.sheriaconnectapi.Model.Entities");
+                new Reflections("tz.co.miugro.Model.Entities");
 
         Set<Class<?>> entities =
                 reflections.getTypesAnnotatedWith(Entity.class);

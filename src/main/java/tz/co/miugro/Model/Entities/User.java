@@ -1,4 +1,4 @@
-package co.tz.sheriaconnectapi.Model.Entities;
+package tz.co.miugro.Model.Entities;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,7 +1,7 @@
-package co.tz.sheriaconnectapi.Model.Commands;
+package tz.co.miugro.Model.Commands;
 
 import lombok.Getter;
-import co.tz.sheriaconnectapi.Model.DTOs.UserDTO;
+import tz.co.miugro.Model.DTOs.UserDTO;
 
 @Getter
 public class MobileLoginResponse extends LoginResponse {

@@ -1,6 +1,6 @@
-package co.tz.sheriaconnectapi.Repositories;
+package tz.co.miugro.Repositories;
 
-import co.tz.sheriaconnectapi.Model.Entities.Authority;
+import tz.co.miugro.Model.Entities.Authority;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

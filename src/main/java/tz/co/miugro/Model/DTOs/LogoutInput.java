@@ -4,10 +4,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.security.core.Authentication;
 
-@Getter
 @AllArgsConstructor
-public class LoginInput {
-    private UserLoginDTO  userLoginDTO;
+@Getter
+public class LogoutInput {
+    private Authentication auth;
     private HttpServletRequest request;
+    private HttpServletResponse response;
 }

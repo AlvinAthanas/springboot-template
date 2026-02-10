@@ -1,10 +1,10 @@
-package co.tz.sheriaconnectapi.Repositories;
+package tz.co.miugro.Repositories;
 
+import tz.co.miugro.Model.Entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import co.tz.sheriaconnectapi.Model.Entities.User;
 
 import java.util.Optional;
 

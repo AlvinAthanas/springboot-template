@@ -1,4 +1,4 @@
-package co.tz.sheriaconnectapi.Controllers;
+package tz.co.miugro.Controllers;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

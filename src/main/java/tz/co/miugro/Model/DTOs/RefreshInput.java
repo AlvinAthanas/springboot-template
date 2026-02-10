@@ -5,9 +5,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Getter
 @AllArgsConstructor
-public class LoginInput {
-    private UserLoginDTO  userLoginDTO;
-    private HttpServletRequest request;
+@Getter
+public class RefreshInput {
+    HttpServletRequest request;
+    HttpServletResponse response;
+    RefreshTokenRequest body;
 }

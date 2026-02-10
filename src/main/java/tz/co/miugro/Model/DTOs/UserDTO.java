@@ -1,7 +1,7 @@
-package co.tz.sheriaconnectapi.Model.DTOs;
+package tz.co.miugro.Model.DTOs;
 
 
-import co.tz.sheriaconnectapi.Model.Entities.User;
+import tz.co.miugro.Model.Entities.User;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Getter;

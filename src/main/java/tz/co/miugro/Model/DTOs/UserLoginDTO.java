@@ -1,4 +1,4 @@
-package co.tz.sheriaconnectapi.Model.DTOs;
+package tz.co.miugro.Model.DTOs;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package co.tz.sheriaconnectapi.Security.Jwt;
+package tz.co.miugro.Security.Jwt;
 
 public enum ClientType {
     WEB,

@@ -1,4 +1,4 @@
-package co.tz.sheriaconnectapi.config;
+package tz.co.miugro.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,10 +15,11 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(
-                                "https://miugro.co.tz",
-                                "https://www.miugro.co.tz",
-                                "https://api.miugro.co.tz",
-                                "http://miugro.co.tz"
+                                "https://sheria-connect.co.tz",
+                                "https://www.sheria-connect.co.tz",
+                                "https://api.sheria-connect.co.tz",
+                                "http://sheria-connect.co.tz",
+                                "http://api.sheria-connect.co.tz"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                         .allowedHeaders("*")

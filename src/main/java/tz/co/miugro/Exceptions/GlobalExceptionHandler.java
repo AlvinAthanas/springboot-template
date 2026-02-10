@@ -1,4 +1,4 @@
-package co.tz.sheriaconnectapi.Exceptions;
+package tz.co.miugro.Exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +26,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidClientTypeException.class)
     public ResponseEntity<ErrorResponse> handleInvalidClientTypeException(InvalidClientTypeException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidTokenException(InvalidTokenException ex){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ex.getMessage()));
     }
 
 }

@@ -1,8 +1,8 @@
-package co.tz.sheriaconnectapi.Model.Commands;
+package tz.co.miugro.Model.Commands;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import co.tz.sheriaconnectapi.Model.DTOs.UserDTO;
+import tz.co.miugro.Model.DTOs.UserDTO;
 
 @Getter
 @AllArgsConstructor

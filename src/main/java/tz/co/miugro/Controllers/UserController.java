@@ -1,13 +1,13 @@
-package co.tz.sheriaconnectapi.Controllers;
+package tz.co.miugro.Controllers;
 
+import tz.co.miugro.Model.DTOs.UserDTO;
+import tz.co.miugro.Model.Entities.User;
+import tz.co.miugro.Services.UserServices.CreateUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import co.tz.sheriaconnectapi.Model.DTOs.UserDTO;
-import co.tz.sheriaconnectapi.Model.Entities.User;
-import co.tz.sheriaconnectapi.Services.UserServices.CreateUserService;
 
 @RestController
 public class UserController {

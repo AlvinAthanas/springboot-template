@@ -1,5 +1,7 @@
-package co.tz.sheriaconnectapi.Security.Jwt;
+package tz.co.miugro.Security.Jwt;
 
+import tz.co.miugro.Model.Entities.User;
+import tz.co.miugro.Repositories.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,8 +13,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
-import co.tz.sheriaconnectapi.Model.Entities.User;
-import co.tz.sheriaconnectapi.Repositories.UserRepository;
 
 import java.io.IOException;
 import java.util.Set;
@@ -29,7 +29,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/auth") || path.startsWith("/public");
+        System.out.println(path);
+        return path.endsWith("/user")
+                || path.equals("/auth/login")
+                || path.startsWith("/public")
+                || path.equals("/login")
+                || path.equals("/admin/login");
     }
 
     @Override

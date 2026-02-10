@@ -1,5 +1,8 @@
-package co.tz.sheriaconnectapi.Security.Conf;
+package tz.co.miugro.Security.Conf;
 
+import tz.co.miugro.Repositories.UserRepository;
+import tz.co.miugro.Security.Jwt.JwtAuthenticationFilter;
+import tz.co.miugro.Security.UserDetails.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,9 +18,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import co.tz.sheriaconnectapi.Repositories.UserRepository;
-import co.tz.sheriaconnectapi.Security.Jwt.JwtAuthenticationFilter;
-import co.tz.sheriaconnectapi.Security.UserDetails.CustomUserDetailsService;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -52,13 +57,36 @@ public class SecurityConfiguration {
     }
 
     @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of(
+                "https://sheria-connect.co.tz",
+                "https://www.sheria-connect.co.tz",
+                "https://api.sheria-connect.co.tz",
+                "http://sheria-connect.co.tz",
+                "http://api.sheria-connect.co.tz"
+        ));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        System.out.println("🔥 CUSTOM SECURITY FILTER CHAIN LOADED");
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user").permitAll()
-                        .requestMatchers("/login", "/auth/refresh").permitAll()
+                        .requestMatchers("/auth/login", "/auth/refresh", "/auth/logout").permitAll()
                         .requestMatchers("/admin/login").permitAll()
                         .anyRequest().authenticated()
                 )

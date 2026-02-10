@@ -1,4 +1,4 @@
-package co.tz.sheriaconnectapi.Model.Entities;
+package tz.co.miugro.Model.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

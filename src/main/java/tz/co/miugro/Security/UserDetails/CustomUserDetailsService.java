@@ -1,13 +1,13 @@
-package co.tz.sheriaconnectapi.Security.UserDetails;
+package tz.co.miugro.Security.UserDetails;
 
+import tz.co.miugro.Model.Entities.User;
+import tz.co.miugro.Repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import co.tz.sheriaconnectapi.Model.Entities.User;
-import co.tz.sheriaconnectapi.Repositories.UserRepository;
 
 import java.util.Set;
 import java.util.stream.Collectors;
